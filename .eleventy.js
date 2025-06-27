@@ -1,5 +1,5 @@
-import {Glob} from 'bun';
 import {transform as esbuildTransform} from 'esbuild';
+import fg from 'fast-glob';
 import fs from 'fs/promises';
 import {minify as minifyHtml} from 'html-minifier-terser';
 import markdownIt from 'markdown-it';
@@ -14,11 +14,11 @@ const ASSET_DIRS = [
 
 // removes ignored directories from _site because i'm messy
 const removeIgnoredDirectories = async (cwd) => {
-  const ignoredDirectories = await Array.fromAsync(new Glob('**/_unused').scan({
+  const ignoredDirectories = await fg.glob('**/_unused', {
     cwd,
     onlyFiles : false,
     absolute : true,
-  }));
+  });
 
   await Promise.all(
     ignoredDirectories.map(async (dir) => {
@@ -64,10 +64,11 @@ const optimizeOutput = async (outputDirectory) => {
   try {
     await removeIgnoredDirectories(outputDirectory);
 
-    const targetFiles = await Array.fromAsync(new Glob('**/*.{html,css,js}').scan({
+    const targetFiles = await fg.glob('**/*.{html,css,js}', {
       cwd : outputDirectory,
       absolute : true,
-    }));
+      onlyFiles : true,
+    });
 
     await Promise.all(
       targetFiles.map(async (file) => {
@@ -99,9 +100,9 @@ export default (eleventyConfig) => {
   );
 
   // watch SCSS and JS files for changes
-  const cssFiles = Array.from(new Glob('src/**/*.css').scanSync('.'));
-  const scssFiles = Array.from(new Glob('src/**/*.scss').scanSync('.'));
-  const jsFiles = Array.from(new Glob('src/**/*.js').scanSync('.'));
+  const cssFiles = fg.globSync('src/**/*.css');
+  const scssFiles = fg.globSync('src/**/*.scss');
+  const jsFiles = fg.globSync('src/**/*.js');
 
   [...cssFiles, ...scssFiles, ...jsFiles].forEach(
     (file) => eleventyConfig.addWatchTarget(file),
