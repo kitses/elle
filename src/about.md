@@ -1,0 +1,8 @@
+---
+layout: layouts/base.njk
+---
+# {{ page.fileSlug }}
+
+**e2l2** is [REDACTED]&mdash;a music maker, artist, and programmer. It uses it/its pronouns, and is non-binary. It primarily uses Sublime Text. It likes to make IDM. It is not robot-adjacent or therian, nor does it want to be dehumanised or treated like an object.
+
+**e2l2** is part of the 2311 system, and wholly diverged from [Sven](https://llia.nekoweb.org/sven/about.html). The source code and license for this site can be found [here](https://github.com/kitses/e2l2).

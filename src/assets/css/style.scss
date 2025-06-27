@@ -1,0 +1,169 @@
+@use 'sass:color';
+
+$accent: hsl(271.5 69.0% 54.5%);
+$c1: black;
+
+$backPage: hsl(0 0% 91%);
+$back1: hsl(0 0% 99%);
+
+$shadow1: hsla(0 0% 100% / 0.533) 0px 1px 0px;
+$shadow2: hsla(0 0% 0% / 0.533) 0px 1px 0px;
+$shadow3: rgba(0 0 0 / 0.25) 0 1px 2px;
+$shadow4: rgba(0 0 0 / 0.75) 0 0 2px;
+
+html {
+  background: $backPage;
+}
+
+body {
+  margin: 0;
+  font: 14px/1.4 Arial, Liberation Sans, Segoe UI, sans-serif;
+  color: $c1;
+}
+
+main,
+links {
+  text-shadow: $shadow1;
+}
+
+main {
+  padding: 0 8px;
+  overflow: hidden;
+}
+
+h1 {
+  margin: 2px 0 0
+}
+
+p,
+.ent {
+  margin: 0 0 8px
+}
+
+.ent:first-child {
+  margin: 6px 0 8px
+}
+
+a {
+  color: $accent;
+  text-decoration-style: dotted;
+
+  &:hover {
+    color: color.scale($accent, $lightness: 15%)
+  }
+}
+
+img {
+  max-width:100%;
+  height:auto;
+
+  main & {
+    box-shadow: $shadow3;
+  }
+}
+
+container {
+  display: flex;
+  max-width: 640px;
+  min-height: 100vh;
+  background: $back1;
+  margin: 0 auto;
+  box-shadow: rgba(0 0 0 / 0.35) 0 0 6px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0;
+}
+
+sidebar {
+  width: 160px;
+  border-right: 1px solid #00000033;
+  overflow: hidden;
+  /*display: flex;
+  flex-direction: column;*/
+  position: relative;
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    padding: 6px 8px;
+    border: 1px solid #00000033;
+    border-width: 0 0 1px;
+
+    &:hover {
+      background: color.scale($back1, $lightness: -10%);
+    }
+
+    &:active {
+      background: color.scale($back1, $lightness: -15%);
+    }
+  }
+}
+
+#genTime {
+  opacity: .35;
+  font-size: .75em;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin: 8px
+}
+/*
+#sideLogo {
+  width: 100%;
+  object-fit: contain;
+  object-position: top;
+}
+*/
+#wmark {
+  position: absolute;
+  width: 100%;
+  color: white;
+  background: #0007;
+  opacity: 0;
+  text-shadow: $shadow2;
+  padding: 4px 6px;
+  box-sizing: border-box;
+  box-shadow: $shadow3;
+  transition: opacity .25s cubic-bezier(.19,1,.22,1);
+
+  a {
+    color: #fff
+  }
+}
+
+#slCont {
+  box-shadow: $shadow4;
+}
+
+#slCont,
+#fiCont {
+  display: flex;
+  position: relative;
+
+  &:hover #wmark {
+    opacity: 1;
+  }
+}
+
+// for blags
+
+#fiCont {
+  margin: 8px 0 0;
+}
+
+#feature {
+  aspect-ratio: 3/2;
+  object-fit: cover;
+}
+
+#fbCont {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 8px;
+}

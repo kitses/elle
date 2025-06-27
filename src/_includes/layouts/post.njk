@@ -1,0 +1,17 @@
+{% extends "layouts/base.njk" %}
+{% block content %}
+  <div id="fbCont">
+    <h1>{{ title }}</h1><span>{{ date | date_formatted }}</span>
+    {% if feature_image %}
+    <div id="fiCont">
+      {% if feature_caption %}
+        <div id="wmark">
+          {{ feature_caption | safe }}
+        </div>
+      {% endif %}
+      <img id="feature" src="{{ feature_image }}" alt="{{ feature_alt if feature_alt else "feature image for '" + title + "'" }}"/>
+    </div>
+    {% endif %}
+  </div>
+  {{ content | safe }}
+{% endblock %}
