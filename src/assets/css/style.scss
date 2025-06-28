@@ -113,13 +113,13 @@ sidebar {
   text-align: center;
   margin: 8px
 }
-/*
+
 #sideLogo {
-  width: 100%;
-  object-fit: contain;
-  object-position: top;
+  aspect-ratio: 1/1;
+  background: $accent;
+  color: #fff;
 }
-*/
+
 #wmark {
   position: absolute;
   width: 100%;
