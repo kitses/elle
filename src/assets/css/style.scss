@@ -124,7 +124,9 @@ sidebar {
   position: absolute;
   width: 100%;
   color: white;
-  background: #0007;
+  // alpha number is hyperspecific but here's the thing
+  // i fucking love yakshaving my visuals based on values
+  background: rgba(0 0 0 / 0.575);
   opacity: 0;
   text-shadow: $shadow2;
   padding: 4px 6px;
