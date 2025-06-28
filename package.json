@@ -2,10 +2,10 @@
   "name": "e2l2",
   "module": "index.js",
   "devDependencies": {
-    "@11ty/eleventy": "^3.1.1",
-    "@eslint/js": "^9.29.0",
+    "@11ty/eleventy": "^3.1.2",
+    "@eslint/js": "^9.30.0",
     "esbuild": "^0.25.5",
-    "eslint": "^9.29.0",
+    "eslint": "^9.30.0",
     "fast-glob": "^3.3.3",
     "globals": "^16.2.0",
     "html-minifier": "^4.0.0",
@@ -13,7 +13,7 @@
     "markdown-it-attrs": "^4.3.1",
     "rimraf": "^6.0.1",
     "sass": "^1.89.2",
-    "terser": "^5.43.0"
+    "terser": "^5.43.1"
   },
   "private": true,
   "scripts": {
