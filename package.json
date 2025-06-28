@@ -10,12 +10,12 @@
     "globals": "^16.2.0",
     "html-minifier-terser": "^7.2.0",
     "markdown-it-attrs": "^4.3.1",
-    "rimraf": "^6.0.1",
+    "node-rmrf": "^1.2.1",
     "sass": "^1.89.2"
   },
   "private": true,
   "scripts": {
-    "serve": "bun run -b rimraf ./_site && bun run -b ./node_modules/@11ty/eleventy/cmd.cjs --serve",
-    "build": "bun run -b rimraf ./_site && bun run -b ./node_modules/@11ty/eleventy/cmd.cjs"
+    "serve": "bun run -b node-rmrf ./_site && bun run -b ./node_modules/@11ty/eleventy/cmd.cjs --serve",
+    "build": "bun run -b node-rmrf ./_site && bun run -b ./node_modules/@11ty/eleventy/cmd.cjs"
   }
 }
