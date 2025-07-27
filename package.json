@@ -18,5 +18,10 @@
   "scripts": {
     "serve": "bun run -b node-rmrf ./_site && bun run -b ./node_modules/@11ty/eleventy/cmd.cjs --serve",
     "build": "bun run -b node-rmrf ./_site && bun run -b ./node_modules/@11ty/eleventy/cmd.cjs"
+  },
+  "dependencies": {
+    "cssnano": "^7.1.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1"
   }
 }

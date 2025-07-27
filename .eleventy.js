@@ -1,3 +1,4 @@
+import cssnano from 'cssnano';
 import {transform as esbuildTransform} from 'esbuild';
 import fg from 'fast-glob';
 import fs from 'fs/promises';
@@ -5,12 +6,20 @@ import {minify as minifyHtml} from 'html-minifier-terser';
 import markdownIt from 'markdown-it';
 import markdownItAttrs from 'markdown-it-attrs';
 import path from 'path';
+import postcss from 'postcss';
 import * as sass from 'sass';
 
 const SITE_DIR = '_site';
 const ASSET_DIRS = [
   'src/assets/img',
 ];
+
+// PostCSS processor with cssnano
+const cssProcessor = postcss([
+  cssnano({
+    preset : 'default',
+  }),
+]);
 
 // removes ignored directories from _site because i'm messy
 const removeIgnoredDirectories = async (cwd) => {
@@ -47,15 +56,21 @@ const minifyFile = async (filePath) => {
     });
   }
 
-  if (fileExtension === '.css' || fileExtension === '.js') {
-    const loader = fileExtension.slice(1);
+  if (fileExtension === '.css') {
+    const result = await cssProcessor.process(sourceContent, {from : filePath});
+    console.log(`Minified CSS: ${filePath}`);
+    return result.css;
+  }
+
+  if (fileExtension === '.js') {
     const {code} = await esbuildTransform(sourceContent, {
-      loader,
+      loader : 'js',
       minify : true,
     });
-    console.log(`Minified ${loader.toUpperCase()}: ${filePath}`);
+    console.log(`Minified JS: ${filePath}`);
     return code;
   }
+
   return sourceContent;
 };
 
@@ -136,11 +151,8 @@ export default (eleventyConfig) => {
     outputFileExtension : 'css',
     compile(inputContent) {
       return async () => {
-        const {code} = await esbuildTransform(inputContent, {
-          loader : 'css',
-          minify : true,
-        });
-        return code;
+        const result = await cssProcessor.process(inputContent, {from : undefined});
+        return result.css;
       };
     },
   });
@@ -149,10 +161,13 @@ export default (eleventyConfig) => {
   eleventyConfig.addExtension('scss', {
     outputFileExtension : 'css',
     compile(inputContent) {
-      const {css} = sass.compileString(inputContent, {
-        style : 'compressed',
-      });
-      return async () => css;
+      return async () => {
+        const {css} = sass.compileString(inputContent, {
+          style : 'expanded',
+        });
+        const result = await cssProcessor.process(css, {from : undefined});
+        return result.css;
+      };
     }
   });
 
