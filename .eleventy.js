@@ -17,7 +17,7 @@ const ASSET_DIRS = [
 // PostCSS processor with cssnano
 const cssProcessor = postcss([
   cssnano({
-    preset : 'default',
+    preset : 'advanced',
   }),
 ]);
 
