@@ -1,71 +1,73 @@
-import cssnano from 'cssnano';
-import {transform as esbuildTransform} from 'esbuild';
-import fg from 'fast-glob';
-import fs from 'fs/promises';
-import {minify as minifyHtml} from 'html-minifier-terser';
-import markdownIt from 'markdown-it';
-import markdownItAttrs from 'markdown-it-attrs';
-import path from 'path';
-import postcss from 'postcss';
-import * as sass from 'sass';
+import cssnano from "cssnano";
+import { transform as esbuildTransform } from "esbuild";
+import fg from "fast-glob";
+import fs from "fs/promises";
+import { minify as minifyHtml } from "html-minifier-terser";
+import markdownIt from "markdown-it";
+import markdownItAttrs from "markdown-it-attrs";
+import path from "path";
+import postcss from "postcss";
+import * as sass from "sass";
 
-const SITE_DIR = '_site';
+const SITE_DIR = "_site";
 const ASSET_DIRS = [
-  'src/assets/img',
+  "src/assets/img",
 ];
 
 // PostCSS processor with cssnano
 const cssProcessor = postcss([
   cssnano({
-    preset : 'advanced',
+    preset: "advanced",
   }),
 ]);
 
 // removes ignored directories from _site because i'm messy
 const removeIgnoredDirectories = async (cwd) => {
-  const ignoredDirectories = await fg.glob('**/_unused', {
+  const ignoredDirectories = await fg.glob("**/_unused", {
     cwd,
-    onlyFiles : false,
-    absolute : true,
+    onlyFiles: false,
+    absolute: true,
   });
 
   await Promise.all(
     ignoredDirectories.map(async (dir) => {
       console.log(`Removing ignored directory: ${dir}`);
-      await fs.rm(dir, {recursive : true, force : true});
+      await fs.rm(dir, { recursive: true, force: true });
     }),
   );
 };
 
 // minifies files based on their extensions, excluding JS and SCSS
 const minifyFile = async (filePath) => {
-  const sourceContent = await fs.readFile(filePath, 'utf8');
+  const sourceContent = await fs.readFile(filePath, "utf8");
   const fileExtension = path.extname(filePath);
 
-  if (fileExtension === '.html') {
+  if (fileExtension === ".html") {
     return minifyHtml(sourceContent, {
-      collapseWhitespace : true,
-      removeComments : true,
-      removeOptionalTags : false, // lists are broken if else
-      removeRedundantAttributes : true,
-      removeScriptTypeAttributes : true,
-      removeTagWhitespace : true,
-      useShortDoctype : true,
-      minifyCSS : true,
-      minifyJS : true,
+      collapseWhitespace: true,
+      removeComments: true,
+      removeOptionalTags: false, // lists are broken if else
+      removeRedundantAttributes: true,
+      removeScriptTypeAttributes: true,
+      removeTagWhitespace: true,
+      useShortDoctype: true,
+      minifyCSS: true,
+      minifyJS: true,
     });
   }
 
-  if (fileExtension === '.css') {
-    const result = await cssProcessor.process(sourceContent, {from : filePath});
+  if (fileExtension === ".css") {
+    const result = await cssProcessor.process(sourceContent, {
+      from: filePath,
+    });
     console.log(`Minified CSS: ${filePath}`);
     return result.css;
   }
 
-  if (fileExtension === '.js') {
-    const {code} = await esbuildTransform(sourceContent, {
-      loader : 'js',
-      minify : true,
+  if (fileExtension === ".js") {
+    const { code } = await esbuildTransform(sourceContent, {
+      loader: "js",
+      minify: true,
     });
     console.log(`Minified JS: ${filePath}`);
     return code;
@@ -79,10 +81,10 @@ const optimizeOutput = async (outputDirectory) => {
   try {
     await removeIgnoredDirectories(outputDirectory);
 
-    const targetFiles = await fg.glob('**/*.{html,css,js}', {
-      cwd : outputDirectory,
-      absolute : true,
-      onlyFiles : true,
+    const targetFiles = await fg.glob("**/*.{html,css,js}", {
+      cwd: outputDirectory,
+      absolute: true,
+      onlyFiles: true,
     });
 
     await Promise.all(
@@ -92,21 +94,21 @@ const optimizeOutput = async (outputDirectory) => {
       }),
     );
   } catch (error) {
-    console.error('Post-build optimization failed:', error);
+    console.error("Post-build optimization failed:", error);
   }
 };
 
 export default (eleventyConfig) => {
   // redundant but needed /shrug.
-  eleventyConfig.ignores.add('src/**/_unused/**');
+  eleventyConfig.ignores.add("src/**/_unused/**");
 
   eleventyConfig.addShortcode(
-    'currentYear',
+    "currentYear",
     () => new Date().getFullYear().toString(),
   );
 
   eleventyConfig.addShortcode(
-    'unixTime',
+    "unixTime",
     () => Math.floor(Date.now() / 1000),
   );
 
@@ -115,29 +117,32 @@ export default (eleventyConfig) => {
   );
 
   // watch SCSS and JS files for changes
-  const cssFiles = fg.globSync('src/**/*.css');
-  const scssFiles = fg.globSync('src/**/*.scss');
-  const jsFiles = fg.globSync('src/**/*.js');
+  const cssFiles = fg.globSync("src/**/*.css");
+  const scssFiles = fg.globSync("src/**/*.scss");
+  const jsFiles = fg.globSync("src/**/*.js");
 
   [...cssFiles, ...scssFiles, ...jsFiles].forEach(
     (file) => eleventyConfig.addWatchTarget(file),
   );
 
   // configure markdownIt
-  const md = markdownIt({html : true, linkify : true, typographer : false}).use(markdownItAttrs);
+  const md = markdownIt({ html: true, linkify: true, typographer: false }).use(
+    markdownItAttrs,
+  );
 
   // cache the original link_open renderer rule
-  const defaultLinkOpenRenderer = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
-    return self.renderToken(tokens, idx, options);
-  };
+  const defaultLinkOpenRenderer = md.renderer.rules.link_open ||
+    function (tokens, idx, options, env, self) {
+      return self.renderToken(tokens, idx, options);
+    };
 
   // override link_open rule to add rel="noopener" to external links
-  md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
+  md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
     const token = tokens[idx];
-    const href = token.attrGet('href');
+    const href = token.attrGet("href");
 
     if (href && /^https?:\/\//i.test(href)) {
-      token.attrJoin('rel', 'noopener');
+      token.attrJoin("rel", "noopener");
     }
 
     // call the original renderer to ensure default behavior (e.g., adds
@@ -145,88 +150,91 @@ export default (eleventyConfig) => {
     return defaultLinkOpenRenderer(tokens, idx, options, env, self);
   };
 
-  eleventyConfig.setLibrary('md', md);
+  eleventyConfig.setLibrary("md", md);
 
-  eleventyConfig.addExtension('css', {
-    outputFileExtension : 'css',
+  eleventyConfig.addExtension("css", {
+    outputFileExtension: "css",
     compile(inputContent) {
       return async () => {
-        const result = await cssProcessor.process(inputContent, {from : undefined});
+        const result = await cssProcessor.process(inputContent, {
+          from: undefined,
+        });
         return result.css;
       };
     },
   });
 
   // SCSS support
-  eleventyConfig.addExtension('scss', {
-    outputFileExtension : 'css',
+  eleventyConfig.addExtension("scss", {
+    outputFileExtension: "css",
     compile(inputContent) {
       return async () => {
-        const {css} = sass.compileString(inputContent, {
-          style : 'expanded',
+        const { css } = sass.compileString(inputContent, {
+          style: "expanded",
         });
-        const result = await cssProcessor.process(css, {from : undefined});
+        const result = await cssProcessor.process(css, { from: undefined });
         return result.css;
       };
-    }
+    },
   });
 
   // date filters yayaya
   eleventyConfig.addFilter(
-    'date_to_datetime',
-    (value) => value ? new Date(value).toISOString() : '',
+    "date_to_datetime",
+    (value) => value ? new Date(value).toISOString() : "",
   );
 
-  eleventyConfig.addFilter('date_formatted', (value) => {
+  eleventyConfig.addFilter("date_formatted", (value) => {
     if (!value) {
-      return '';
+      return "";
     }
 
     const dateObject = new Date(value);
 
     // eleventy interprets date-only strings from front matter as midnight UTC
     // for some fucking reason. this is a hack, tread lightly
-    const isDateOnly = dateObject.getUTCHours() === 0 && dateObject.getUTCMinutes() === 0 &&
-                       dateObject.getUTCSeconds() === 0 && dateObject.getUTCMilliseconds() === 0;
+    const isDateOnly = dateObject.getUTCHours() === 0 &&
+      dateObject.getUTCMinutes() === 0 &&
+      dateObject.getUTCSeconds() === 0 && dateObject.getUTCMilliseconds() === 0;
 
     if (isDateOnly) {
       const options = {
-        year : 'numeric',
-        month : 'short',
-        day : 'numeric',
-        timeZone : 'UTC',
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
       };
-      return new Intl.DateTimeFormat('en-US', options).format(dateObject);
+      return new Intl.DateTimeFormat("en-US", options).format(dateObject);
     } else {
       const options = {
-        year : 'numeric',
-        month : 'short',
-        day : 'numeric',
-        hour : 'numeric',
-        minute : '2-digit',
-        timeZone : 'America/Chicago',
-        timeZoneName : 'short',
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        timeZone: "America/Chicago",
+        timeZoneName: "short",
       };
-      return new Intl.DateTimeFormat('en-US', options).format(dateObject);
+      return new Intl.DateTimeFormat("en-US", options).format(dateObject);
     }
   });
 
   // add posts collection
   eleventyConfig.addCollection(
-    'posts',
-    (collection) => collection.getFilteredByGlob('src/posts/*.md').reverse(),
+    "posts",
+    (collection) => collection.getFilteredByGlob("src/posts/*.md").reverse(),
   );
 
   // post-build optimization
-  eleventyConfig.on('afterBuild', () => optimizeOutput(SITE_DIR));
+  eleventyConfig.on("afterBuild", () => optimizeOutput(SITE_DIR));
 
   return {
-    templateFormats : [ 'njk', 'md', 'scss' ],
-    dir : {
-      input : 'src',
-      output : SITE_DIR,
-      includes : '_includes',
-      data : '_data',
+    templateFormats: ["njk", "md", "scss"],
+    dir: {
+      input: "src",
+      output: SITE_DIR,
+      includes: "_includes",
+      data: "_data",
     },
   };
 };
