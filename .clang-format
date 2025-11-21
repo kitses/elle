@@ -1,8 +1,0 @@
----
-Language: JavaScript
-BasedOnStyle: Microsoft
-JavaScriptQuotes: Single
-IndentWidth: 2
-ContinuationIndentWidth: 2
-BreakBeforeBraces: Attach
-AlignAfterOpenBracket: DontAlign
