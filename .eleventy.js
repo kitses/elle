@@ -1,102 +1,16 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import cssnano from "cssnano";
-import { transform as esbuildTransform } from "esbuild";
+import { transformSync } from "esbuild";
 import fg from "fast-glob";
-import fs from "fs/promises";
 import { minify as minifyHtml } from "html-minifier-terser";
 import markdownIt from "markdown-it";
 import markdownItAttrs from "markdown-it-attrs";
-import path from "path";
 import postcss from "postcss";
 import * as sass from "sass";
 
 const SITE_DIR = "_site";
-const ASSET_DIRS = [
-  "src/assets/img",
-];
-
-// PostCSS processor with cssnano
-const cssProcessor = postcss([
-  cssnano({
-    preset: "advanced",
-  }),
-]);
-
-// removes ignored directories from _site because i'm messy
-const removeIgnoredDirectories = async (cwd) => {
-  const ignoredDirectories = await fg.glob("**/_unused", {
-    cwd,
-    onlyFiles: false,
-    absolute: true,
-  });
-
-  await Promise.all(
-    ignoredDirectories.map(async (dir) => {
-      console.log(`Removing ignored directory: ${dir}`);
-      await fs.rm(dir, { recursive: true, force: true });
-    }),
-  );
-};
-
-// minifies files based on their extensions, excluding JS and SCSS
-const minifyFile = async (filePath) => {
-  const sourceContent = await fs.readFile(filePath, "utf8");
-  const fileExtension = path.extname(filePath);
-
-  if (fileExtension === ".html") {
-    return minifyHtml(sourceContent, {
-      collapseWhitespace: true,
-      removeComments: true,
-      removeOptionalTags: false, // lists are broken if else
-      removeRedundantAttributes: true,
-      removeScriptTypeAttributes: true,
-      removeTagWhitespace: true,
-      useShortDoctype: true,
-      minifyCSS: true,
-      minifyJS: true,
-    });
-  }
-
-  if (fileExtension === ".css") {
-    const result = await cssProcessor.process(sourceContent, {
-      from: filePath,
-    });
-    console.log(`Minified CSS: ${filePath}`);
-    return result.css;
-  }
-
-  if (fileExtension === ".js") {
-    const { code } = await esbuildTransform(sourceContent, {
-      loader: "js",
-      minify: true,
-    });
-    console.log(`Minified JS: ${filePath}`);
-    return code;
-  }
-
-  return sourceContent;
-};
-
-// does the deed
-const optimizeOutput = async (outputDirectory) => {
-  try {
-    await removeIgnoredDirectories(outputDirectory);
-
-    const targetFiles = await fg.glob("**/*.{html,css,js}", {
-      cwd: outputDirectory,
-      absolute: true,
-      onlyFiles: true,
-    });
-
-    await Promise.all(
-      targetFiles.map(async (file) => {
-        const minifiedContent = await minifyFile(file);
-        await fs.writeFile(file, minifiedContent);
-      }),
-    );
-  } catch (error) {
-    console.error("Post-build optimization failed:", error);
-  }
-};
+const cssPostProcessor = postcss([cssnano({ preset: "advanced" })]);
 
 export default (eleventyConfig) => {
   // redundant but needed /shrug.
@@ -109,127 +23,132 @@ export default (eleventyConfig) => {
 
   eleventyConfig.addShortcode(
     "unixTime",
-    () => Math.floor(Date.now() / 1000),
+    () => Math.floor(Date.now() / 1000).toString(),
   );
 
-  ASSET_DIRS.forEach(
-    (directory) => eleventyConfig.addPassthroughCopy(directory),
-  );
+  eleventyConfig.addPassthroughCopy("src/assets/img");
+  eleventyConfig.addWatchTarget("src/**/*.{css,scss,js}");
 
-  // watch SCSS and JS files for changes
-  const cssFiles = fg.globSync("src/**/*.css");
-  const scssFiles = fg.globSync("src/**/*.scss");
-  const jsFiles = fg.globSync("src/**/*.js");
-
-  [...cssFiles, ...scssFiles, ...jsFiles].forEach(
-    (file) => eleventyConfig.addWatchTarget(file),
-  );
-
-  // configure markdownIt
   const md = markdownIt({ html: true, linkify: true, typographer: false }).use(
     markdownItAttrs,
   );
 
-  // cache the original link_open renderer rule
-  const defaultLinkOpenRenderer = md.renderer.rules.link_open ||
-    function (tokens, idx, options, env, self) {
-      return self.renderToken(tokens, idx, options);
-    };
+  const defaultLinkRenderer = md.renderer.rules.link_open ||
+    ((tokens, idx, options, _env, self) =>
+      self.renderToken(tokens, idx, options));
 
-  // override link_open rule to add rel="noopener" to external links
-  md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
-    const token = tokens[idx];
-    const href = token.attrGet("href");
-
+  md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+    const href = tokens[idx].attrGet("href");
     if (href && /^https?:\/\//i.test(href)) {
-      token.attrJoin("rel", "noopener");
+      tokens[idx].attrJoin("rel", "noopener");
     }
-
-    // call the original renderer to ensure default behavior (e.g., adds
-    // target="_blank" if specified via markdown-it-attrs)
-    return defaultLinkOpenRenderer(tokens, idx, options, env, self);
+    return defaultLinkRenderer(tokens, idx, options, env, self);
   };
-
   eleventyConfig.setLibrary("md", md);
 
   eleventyConfig.addExtension("css", {
     outputFileExtension: "css",
-    compile(inputContent) {
-      return async () => {
-        const result = await cssProcessor.process(inputContent, {
-          from: undefined,
-        });
-        return result.css;
-      };
+    compile: (content) => async () => {
+      return (await cssPostProcessor.process(content, { from: undefined })).css;
     },
   });
 
-  // SCSS support
   eleventyConfig.addExtension("scss", {
     outputFileExtension: "css",
-    compile(inputContent) {
-      return async () => {
-        const { css } = sass.compileString(inputContent, {
-          style: "expanded",
-        });
-        const result = await cssProcessor.process(css, { from: undefined });
-        return result.css;
-      };
+    compile: (content) => async () => {
+      const { css } = sass.compileString(content, { style: "expanded" });
+      return (await cssPostProcessor.process(css, { from: undefined })).css;
     },
   });
 
-  // date filters yayaya
   eleventyConfig.addFilter(
     "date_to_datetime",
     (value) => value ? new Date(value).toISOString() : "",
   );
 
   eleventyConfig.addFilter("date_formatted", (value) => {
-    if (!value) {
-      return "";
-    }
+    if (!value) return "";
+    const date = new Date(value);
 
-    const dateObject = new Date(value);
-
-    // eleventy interprets date-only strings from front matter as midnight UTC
-    // for some fucking reason. this is a hack, tread lightly
-    const isDateOnly = dateObject.getUTCHours() === 0 &&
-      dateObject.getUTCMinutes() === 0 &&
-      dateObject.getUTCSeconds() === 0 && dateObject.getUTCMilliseconds() === 0;
+    // HACK: eleventy interprets date-only strings from front matter as midnight UTC
+    // for some fucking reason. do not remove
+    const isDateOnly = date.getUTCHours() === 0 &&
+      date.getUTCMinutes() === 0 &&
+      date.getUTCSeconds() === 0 &&
+      date.getUTCMilliseconds() === 0;
 
     if (isDateOnly) {
-      const options = {
+      return new Intl.DateTimeFormat("en-US", {
         year: "numeric",
         month: "short",
         day: "numeric",
         timeZone: "UTC",
-      };
-      return new Intl.DateTimeFormat("en-US", options).format(dateObject);
-    } else {
-      const options = {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        timeZone: "America/Chicago",
-        timeZoneName: "short",
-      };
-      return new Intl.DateTimeFormat("en-US", options).format(dateObject);
+      }).format(date);
     }
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: "America/Chicago",
+      timeZoneName: "short",
+    }).format(date);
   });
 
-  // add posts collection
   eleventyConfig.addCollection(
     "posts",
     (collection) => collection.getFilteredByGlob("src/posts/*.md").reverse(),
   );
 
-  // post-build optimization
-  eleventyConfig.on("afterBuild", () => optimizeOutput(SITE_DIR));
+  eleventyConfig.on("afterBuild", async () => {
+    const ignoredDirs = await fg("**/_unused", {
+      cwd: SITE_DIR,
+      onlyDirectories: true,
+      absolute: true,
+    });
+
+    await Promise.all(
+      ignoredDirs.map((dir) => fs.rm(dir, { recursive: true, force: true })),
+    );
+
+    const files = await fg("**/*.{html,css,js}", {
+      cwd: SITE_DIR,
+      absolute: true,
+    });
+
+    for (const file of files) {
+      const content = await fs.readFile(file, "utf8");
+      const ext = path.extname(file);
+      let output = content;
+
+      if (ext === ".html") {
+        output = await minifyHtml(content, {
+          collapseWhitespace: true,
+          removeComments: true,
+          removeOptionalTags: false, // lists are broken if else
+          removeRedundantAttributes: true,
+          removeScriptTypeAttributes: true,
+          removeTagWhitespace: true,
+          useShortDoctype: true,
+          minifyCSS: true,
+          minifyJS: true,
+        });
+      } else if (ext === ".css") {
+        const result = await cssPostProcessor.process(content, { from: file });
+        output = result.css;
+      } else if (ext === ".js") {
+        output = transformSync(content, { loader: "js", minify: true }).code;
+      }
+
+      if (output !== content) {
+        await fs.writeFile(file, output);
+      }
+    }
+  });
 
   return {
-    templateFormats: ["njk", "md", "scss"],
+    templateFormats: ["njk", "md", "scss", "css"],
     dir: {
       input: "src",
       output: SITE_DIR,
