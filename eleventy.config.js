@@ -1,16 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import cssnano from "cssnano";
 import { transformSync } from "esbuild";
 import fg from "fast-glob";
 import { minify as minifyHtml } from "html-minifier-terser";
 import markdownIt from "markdown-it";
 import markdownItAttrs from "markdown-it-attrs";
-import postcss from "postcss";
 import * as sass from "sass";
 
 const SITE_DIR = "_site";
-const cssPostProcessor = postcss([cssnano({ preset: "advanced" })]);
 
 export default (eleventyConfig) => {
   // redundant but needed /shrug.
@@ -49,7 +46,7 @@ export default (eleventyConfig) => {
   eleventyConfig.addExtension("css", {
     outputFileExtension: "css",
     compile: (content) => async () => {
-      return (await cssPostProcessor.process(content, { from: undefined })).css;
+      return transformSync(content, { loader: "css", minify: true }).code;
     },
   });
 
@@ -57,7 +54,7 @@ export default (eleventyConfig) => {
     outputFileExtension: "css",
     compile: (content) => async () => {
       const { css } = sass.compileString(content, { style: "expanded" });
-      return (await cssPostProcessor.process(css, { from: undefined })).css;
+      return transformSync(css, { loader: "css", minify: true }).code;
     },
   });
 
@@ -135,8 +132,7 @@ export default (eleventyConfig) => {
           minifyJS: true,
         });
       } else if (ext === ".css") {
-        const result = await cssPostProcessor.process(content, { from: file });
-        output = result.css;
+        output = transformSync(content, { loader: "css", minify: true }).code;
       } else if (ext === ".js") {
         output = transformSync(content, { loader: "js", minify: true }).code;
       }

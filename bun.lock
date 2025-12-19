@@ -5,8 +5,6 @@
     "": {
       "name": "e2l2",
       "dependencies": {
-        "cssnano": "^7.1.2",
-        "postcss": "^8.5.6",
         "postcss-cli": "^11.0.1",
       },
       "devDependencies": {
@@ -266,8 +264,6 @@
     "css-what": ["css-what@6.2.2", "", {}, "sha512-u/O3vwbptzhMs3L1fQE82ZSLHQQfto5gyZzwteVIEyeaY5Fc7R4dapF/BvRoSYFeqfBk4m0V1Vafq5Pjv25wvA=="],
 
     "cssesc": ["cssesc@3.0.0", "", { "bin": { "cssesc": "bin/cssesc" } }, "sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg=="],
-
-    "cssnano": ["cssnano@7.1.2", "", { "dependencies": { "cssnano-preset-default": "^7.0.10", "lilconfig": "^3.1.3" }, "peerDependencies": { "postcss": "^8.4.32" } }, "sha512-HYOPBsNvoiFeR1eghKD5C3ASm64v9YVyJB4Ivnl2gqKoQYvjjN/G0rztvKQq8OxocUtC6sjqY8jwYngIB4AByA=="],
 
     "cssnano-preset-advanced": ["cssnano-preset-advanced@7.0.10", "", { "dependencies": { "autoprefixer": "^10.4.21", "browserslist": "^4.27.0", "cssnano-preset-default": "^7.0.10", "postcss-discard-unused": "^7.0.4", "postcss-merge-idents": "^7.0.1", "postcss-reduce-idents": "^7.0.1", "postcss-zindex": "^7.0.1" }, "peerDependencies": { "postcss": "^8.4.32" } }, "sha512-lfsKxX4H6WS7BbNyDxkGOu2VgN4bbHQpY8llA3i3SJ9ozAPJ1MHq265Aw0aslM161qiS0zhCHaC6zRcEbNAgUA=="],
 
