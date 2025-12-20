@@ -16,6 +16,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --accent: hsl(271.5 69.0% 65%);
+    --accentH: hsl(271.5 69.0% 75%);
     --text: hsl(0 0% 90%);
     --backPage: hsl(0 0% 8%);
     --back1: hsl(0 0% 12%);
