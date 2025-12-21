@@ -1,0 +1,11 @@
+:root {
+  --accent: hsl(163 48.8% 25%);
+  --accentH: hsl(163 48.8% 35%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: hsl(163.0 48.8% 51.8%);
+    --accentH: hsl(163.0 48.8% 61.8%);
+  }
+}

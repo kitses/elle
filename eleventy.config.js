@@ -98,6 +98,11 @@ export default (eleventyConfig) => {
     (collection) => collection.getFilteredByGlob("src/posts/*.md").reverse(),
   );
 
+  eleventyConfig.addCollection(
+    "postsLuca",
+    (collection) => collection.getFilteredByGlob("src/luca/posts/*.md").reverse(),
+  );
+
   eleventyConfig.on("afterBuild", async () => {
     const ignoredDirs = await fg("**/_unused", {
       cwd: SITE_DIR,

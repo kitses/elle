@@ -4,19 +4,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link
+    rel="stylesheet"
+    href="/assets/css/{{ 'luca' if luca else 'e2l2' }}.css"
+  >
   <link rel="stylesheet" href="/assets/css/style.css">
-  <link rel="shortcut icon" href="/assets/img/lambda.svg" type="image/x-icon">
-  <title>e2l2: {{ title or page.fileSlug or "index" }}</title>
+  <link
+    rel="shortcut icon"
+    href="/assets/img/{{ 'companionship.svg' if luca else 'lambda.svg' }}"
+    type="image/x-icon"
+  >
+  <title>
+    {{ "luca sīlot:" if luca else "e2l2:" }}
+    {{ title or page.fileSlug or "index" }}
+  </title>
 </head>
 
 <body>
   <container>
-  {% include "partials/sidebar.njk" %}
-  <main>
-    {% block content %}
-      {{ content | safe }}
-    {% endblock %}
-  </main>
+    {% if luca %}
+      {% include "partials/sidebarLuca.njk" %}
+    {% else %}
+      {% include "partials/sidebar.njk" %}
+    {% endif %}
+    <main>
+      {% block content %}
+        {{ content | safe }}
+      {% endblock %}
+    </main>
   </container>
 </body>
 

@@ -1,0 +1,12 @@
+---
+layout: layouts/base.njk
+luca: true
+---
+{% for post in collections.postsLuca %}
+  <div class="ent">
+    <a href="{{ post.url }}"><span>{{ post.data.title }}</span></a>
+    <span>&middot;</span>
+    <time datetime="{{ post.date | date_to_datetime }}">{{ post.date | date_formatted }}</time>
+    <div><span><strong>{{ post.data.description }}</strong></span></div>
+  </div>
+{% endfor %}
