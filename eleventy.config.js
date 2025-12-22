@@ -45,14 +45,14 @@ export default (eleventyConfig) => {
 
   eleventyConfig.addExtension("css", {
     outputFileExtension: "css",
-    compile: (content) => async () => {
+    compile: (content) => () => {
       return transformSync(content, { loader: "css", minify: true }).code;
     },
   });
 
   eleventyConfig.addExtension("scss", {
     outputFileExtension: "css",
-    compile: (content) => async () => {
+    compile: (content) => () => {
       const { css } = sass.compileString(content, { style: "expanded" });
       return transformSync(css, { loader: "css", minify: true }).code;
     },
