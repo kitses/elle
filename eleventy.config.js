@@ -93,15 +93,17 @@ export default (eleventyConfig) => {
     }).format(date);
   });
 
-  eleventyConfig.addCollection(
-    "posts",
-    (collection) => collection.getFilteredByGlob("src/posts/*.md").reverse(),
-  );
+  const postGlobs = {
+    posts: "src/posts/*.md",
+    postsLuca: "src/luca/posts/*.md",
+  };
 
-  eleventyConfig.addCollection(
-    "postsLuca",
-    (collection) => collection.getFilteredByGlob("src/luca/posts/*.md").reverse(),
-  );
+  Object.entries(postGlobs).forEach(([name, glob]) => {
+    eleventyConfig.addCollection(
+      name,
+      (collection) => collection.getFilteredByGlob(glob).reverse(),
+    );
+  });
 
   eleventyConfig.on("afterBuild", async () => {
     const ignoredDirs = await fg("**/_unused", {
