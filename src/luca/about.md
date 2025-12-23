@@ -1,6 +1,5 @@
 ---
 layout: layouts/base.njk
-luca: true
 ---
 
 # {{ page.fileSlug }}

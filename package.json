@@ -21,6 +21,7 @@
     "build": "bun run -b node-rmrf ./_site && bun run -b ./node_modules/@11ty/eleventy/cmd.cjs"
   },
   "dependencies": {
+    "js-yaml": "^4.1.1",
     "postcss-cli": "^11.0.1"
   }
 }

@@ -6,6 +6,7 @@ import { minify as minifyHtml } from "html-minifier-terser";
 import markdownIt from "markdown-it";
 import markdownItAttrs from "markdown-it-attrs";
 import * as sass from "sass";
+import yaml from "js-yaml";
 
 const SITE_DIR = "_site";
 
@@ -56,6 +57,10 @@ export default (eleventyConfig) => {
       const { css } = sass.compileString(content, { style: "expanded" });
       return transformSync(css, { loader: "css", minify: true }).code;
     },
+  });
+
+  eleventyConfig.addDataExtension("yml,yaml", {
+    parser: (contents) => yaml.load(contents),
   });
 
   eleventyConfig.addFilter(
