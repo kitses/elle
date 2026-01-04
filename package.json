@@ -17,8 +17,8 @@
   },
   "private": true,
   "scripts": {
-    "serve": "bun run -b node-rmrf ./_site && bun run -b ./node_modules/@11ty/eleventy/cmd.cjs --serve",
-    "build": "bun run -b node-rmrf ./_site && bun run -b ./node_modules/@11ty/eleventy/cmd.cjs"
+    "serve": "node-rmrf ./_site && eleventy --serve",
+    "build": "node-rmrf ./_site && eleventy"
   },
   "dependencies": {
     "js-yaml": "^4.1.1",
