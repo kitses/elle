@@ -16,7 +16,7 @@ const { variant, title, date, feature_image, feature_alt, feature_caption } =
 ---
 
 <BaseLayout variant={variant} title={title}>
-  <div id="fbCont">
+  <header>
     <h1>{title}</h1>
     <span>{formatDate(date)}</span>
     {feature_image && (
@@ -31,6 +31,6 @@ const { variant, title, date, feature_image, feature_alt, feature_caption } =
         />
       </div>
     )}
-  </div>
+  </header>
   <slot />
 </BaseLayout>
