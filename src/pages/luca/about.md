@@ -3,7 +3,7 @@ layout: ../../layouts/PageLayout.astro
 title: about
 ---
 
-# {frontmatter.title}
+# about
 
 <div id="fbCont">
   <div id="fiCont">

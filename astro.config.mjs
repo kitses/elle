@@ -11,7 +11,6 @@ export default defineConfig({
 		rehypePlugins: [[rehypeExternalLinks, { rel: ["noopener"] }]],
 	},
 	integrations: [
-		mdx(),
 		compress({
 			Image: false,
 			SVG: false,

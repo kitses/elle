@@ -3,7 +3,7 @@ layout: ../layouts/PageLayout.astro
 title: about
 ---
 
-# {frontmatter.title}
+# about
 
 **e2l2** is [REDACTED]&mdash;a music maker, artist, and programmer. It uses it/its pronouns, and is non-binary. It primarily uses Sublime Text, and likes to make IDM. It is not robot-adjacent or therian, nor does it want to be dehumanised or treated like an object.
 
