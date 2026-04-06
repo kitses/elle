@@ -55,6 +55,10 @@ p,
   }
 }
 
+h1 {
+ margin: 2px 0 0;
+}
+
 .ent:first-child {
   margin: 6px 0 8px;
 }
@@ -185,10 +189,6 @@ header {
   display: flex;
   flex-direction: column;
   margin: 0 0 8px;
-
-  h1 {
-    margin: 2px 0 0;
-  }
 }
 
 .small {
