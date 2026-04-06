@@ -1,0 +1,26 @@
+---
+import PostLayout from "../../../layouts/PostLayout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+	const posts = await getCollection("lucaPosts");
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: { post },
+	}));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<PostLayout
+  variant="luca"
+  title={post.data.title}
+  date={post.data.date}
+  feature_image={post.data.feature_image}
+  feature_alt={post.data.feature_alt}
+  feature_caption={post.data.feature_caption}
+>
+  <Content />
+</PostLayout>

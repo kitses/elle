@@ -1,0 +1,11 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+const { frontmatter } = Astro.props;
+const isLuca = Astro.url.pathname.startsWith("/luca");
+const variant = isLuca ? "luca" : "e2l2";
+---
+
+<BaseLayout variant={variant} title={frontmatter.title}>
+  <slot />
+</BaseLayout>

@@ -1,0 +1,46 @@
+---
+interface Props {
+	variant: "e2l2" | "luca";
+	unixTime: string;
+}
+
+const { variant, unixTime } = Astro.props;
+const isLuca = variant === "luca";
+
+const links = isLuca
+	? [
+			{ href: "/luca/", label: "index" },
+			{ href: "/luca/about/", label: "about" },
+			{ href: "/", label: "e2l2" },
+			{ href: "https://llia.nekoweb.org/system/", label: "upstream" },
+		]
+	: [
+			{ href: "/", label: "index" },
+			{ href: "/about/", label: "about" },
+			{ href: "/luca/", label: "luca" },
+			{ href: "https://llia.nekoweb.org/system/", label: "upstream" },
+		];
+---
+
+<sidebar>
+  <div id="slCont">
+    <img
+      id="sideLogo"
+      src={`/assets/img/${isLuca ? "companionship.svg" : "lambda.svg"}`}
+      alt={isLuca ? "" : "lambda on a purple background"}
+    />
+  </div>
+  <links>
+    <ul>
+      {links.map(({ href, label }) => (
+        <a href={href}>
+          <li>{label}</li>
+        </a>
+      ))}
+    </ul>
+  </links>
+  <span id="genTime">
+    site generated at<br />
+    {unixTime}
+  </span>
+</sidebar>

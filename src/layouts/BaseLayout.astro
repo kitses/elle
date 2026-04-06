@@ -1,0 +1,43 @@
+---
+import Sidebar from "../components/Sidebar.astro";
+import e2l2Css from "../assets/css/e2l2.css?inline";
+import lucaCss from "../assets/css/luca.css?inline";
+import styleCss from "../assets/css/style.scss?inline";
+
+interface Props {
+	variant?: "e2l2" | "luca";
+	title?: string;
+}
+
+const { variant = "e2l2", title } = Astro.props;
+const isLuca = variant === "luca";
+
+const slug = Astro.url.pathname.split("/").filter(Boolean).pop() || "index";
+const displayTitle = `${isLuca ? "luca sīlot:" : "e2l2:"} ${title || slug}`;
+const unixTime = Math.floor(Date.now() / 1000).toString();
+
+const css = (isLuca ? lucaCss : e2l2Css) + styleCss;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <Fragment set:html={`<style>${css}</style>`} />
+    <link
+      rel="shortcut icon"
+      href={`/assets/img/${isLuca ? "companionship.svg" : "lambda.svg"}`}
+      type="image/x-icon"
+    />
+    <title>{displayTitle}</title>
+  </head>
+  <body>
+    <container>
+      <Sidebar variant={variant} unixTime={unixTime} />
+      <main>
+        <slot />
+      </main>
+    </container>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { formatDate } from "../lib/dates";
+
+const posts = (await getCollection("posts")).sort(
+	(a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+---
+
+<BaseLayout variant="e2l2">
+  {posts.map((post) => (
+    <div class="ent">
+      <a href={`/posts/${post.id}/`}>
+        <span>{post.data.title}</span>
+      </a>
+      <span>&middot;</span>
+      <time datetime={post.data.date.toISOString()}>
+        {formatDate(post.data.date)}
+      </time>
+      <div>
+        <span>
+          <strong>{post.data.description}</strong>
+        </span>
+      </div>
+    </div>
+  ))}
+</BaseLayout>

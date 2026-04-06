@@ -1,0 +1,36 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import { formatDate } from "../lib/dates";
+
+interface Props {
+	variant: "e2l2" | "luca";
+	title: string;
+	date: Date;
+	feature_image?: string;
+	feature_alt?: string;
+	feature_caption?: string;
+}
+
+const { variant, title, date, feature_image, feature_alt, feature_caption } =
+	Astro.props;
+---
+
+<BaseLayout variant={variant} title={title}>
+  <div id="fbCont">
+    <h1>{title}</h1>
+    <span>{formatDate(date)}</span>
+    {feature_image && (
+      <div id="fiCont">
+        {feature_caption && (
+          <div id="wmark" set:html={feature_caption} />
+        )}
+        <img
+          id="feature"
+          src={feature_image}
+          alt={feature_alt || `feature image for '${title}'`}
+        />
+      </div>
+    )}
+  </div>
+  <slot />
+</BaseLayout>
