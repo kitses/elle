@@ -13,7 +13,7 @@ const { variant = "elle", title } = Astro.props;
 const isLuca = variant === "luca";
 
 const slug = Astro.url.pathname.split("/").filter(Boolean).pop() || "index";
-const displayTitle = `${isLuca ? "luca sīlot:" : "elle:"} ${title || slug}`;
+const displayTitle = `${isLuca ? "luca sīlot:" : "elle gamble:"} ${title || slug}`;
 const unixTime = Math.floor(Date.now() / 1000).toString();
 
 const css = (isLuca ? lucaCss : elleCss) + styleCss;
