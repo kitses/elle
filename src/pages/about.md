@@ -5,6 +5,6 @@ title: about
 
 # about
 
-**e2l2** is [REDACTED]&mdash;a music maker, artist, and programmer. It uses it/its pronouns, and is non-binary. It primarily uses Sublime Text, and likes to make IDM. It is not robot-adjacent or therian, nor does it want to be dehumanised or treated like an object.
+**Elle Gamble** is a Glaceon, music maker, artist, and programmer. She uses it/she pronouns, and is non-binary. She primarily uses VSCodium, and likes to make IDM. She is not robot-adjacent or therian, nor does she want to be dehumanised or treated like an object.
 
-**e2l2** is part of the 2311 system, and was wholly diverged from [Sven](https://llia.nekoweb.org/sven/about.html). The source code and license for this site can be found [here](https://github.com/kitses/e2l2).
+**Elle** is part of the 2311 system, and was wholly diverged from [Sven](https://sven.llia.workers.dev/about/). The source code and license for this site can be found [here](https://github.com/kitses/e2l2).

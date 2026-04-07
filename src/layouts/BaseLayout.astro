@@ -1,22 +1,22 @@
 ---
 import Sidebar from "../components/Sidebar.astro";
-import e2l2Css from "../assets/css/e2l2.css?inline";
+import elleCss from "../assets/css/elle.css?inline";
 import lucaCss from "../assets/css/luca.css?inline";
 import styleCss from "../assets/css/style.scss?inline";
 
 interface Props {
-	variant?: "e2l2" | "luca";
+	variant?: "elle" | "luca";
 	title?: string;
 }
 
-const { variant = "e2l2", title } = Astro.props;
+const { variant = "elle", title } = Astro.props;
 const isLuca = variant === "luca";
 
 const slug = Astro.url.pathname.split("/").filter(Boolean).pop() || "index";
-const displayTitle = `${isLuca ? "luca sīlot:" : "e2l2:"} ${title || slug}`;
+const displayTitle = `${isLuca ? "luca sīlot:" : "elle:"} ${title || slug}`;
 const unixTime = Math.floor(Date.now() / 1000).toString();
 
-const css = (isLuca ? lucaCss : e2l2Css) + styleCss;
+const css = (isLuca ? lucaCss : elleCss) + styleCss;
 ---
 
 <!doctype html>

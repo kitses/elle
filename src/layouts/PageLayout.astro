@@ -3,7 +3,7 @@ import BaseLayout from "./BaseLayout.astro";
 
 const { frontmatter } = Astro.props;
 const isLuca = Astro.url.pathname.startsWith("/luca");
-const variant = isLuca ? "luca" : "e2l2";
+const variant = isLuca ? "luca" : "elle";
 ---
 
 <BaseLayout variant={variant} title={frontmatter.title}>
