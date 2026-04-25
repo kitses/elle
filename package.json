@@ -5,6 +5,7 @@
 		"node": ">=22.12.0"
 	},
 	"scripts": {
+		"deploy": "astro build; wrangler pages deploy",
 		"dev": "astro dev",
 		"build": "astro build",
 		"preview": "astro preview",
@@ -14,6 +15,7 @@
 		"astro": "^6.1.3",
 		"astro-compress": "^2.4.0",
 		"rehype-external-links": "^3.0.0",
-		"sass-embedded": "^1.99.0"
+		"sass-embedded": "^1.99.0",
+		"wrangler": "^4.85.0"
 	}
 }
