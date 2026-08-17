@@ -8,7 +8,7 @@ const posts = (await getCollection("posts")).sort(
 );
 ---
 
-<BaseLayout variant="e2l2">
+<BaseLayout variant="elle">
   {posts.map((post) => (
     <div class="ent">
       <a href={`/posts/${post.id}/`}>
