@@ -5,7 +5,7 @@
 		"node": ">=22.12.0"
 	},
 	"scripts": {
-		"deploy": "astro build; wrangler pages deploy",
+		"deploy": "astro build && wrangler pages deploy",
 		"dev": "astro dev",
 		"build": "astro build",
 		"preview": "astro preview",
